@@ -56,6 +56,7 @@ button.main:disabled{opacity:.45;cursor:not-allowed}.hidden{display:none}.small{
     <div id="question" class="q"></div>
     <div id="options"></div>
     <div id="feedback" class="feedback hidden"></div>
+    <button class="main" id="prev" disabled>Previous question</button>
     <button class="main" id="next" disabled>Next question</button>
     <button class="main" id="fav">☆ Favorite</button>
     <button class="main" id="restart">Restart</button>
@@ -102,7 +103,7 @@ function render(){
    b.onclick=()=>choose(i,b);$("options").appendChild(b);
  });
  $("feedback").className="feedback hidden";$("feedback").innerHTML="";
- $("next").disabled=true; $("fav").textContent=state.fav.includes(current.id)?"★ Unfavorite":"☆ Favorite";
+ $("next").disabled=true; $("prev").disabled=(index===0); $("fav").textContent=state.fav.includes(current.id)?"★ Unfavorite":"☆ Favorite";
 }
 function choose(i,btn){
  if(answered)return;answered=true;
@@ -116,7 +117,11 @@ function choose(i,btn){
  f.innerHTML="<b>"+(ok?"Correct ✓":"Incorrect ✗")+"</b><br><b>Correct answer:</b> "+letter+". "+current.options[current.correctIndex]+"<br><br><b>Explanation:</b> "+(current.explanation||current.answer_text||"No explanation was captured in the source extraction.");
  $("next").disabled=false;
 }
+$("prev").onclick=()=>{
+  if(index>0){index--;render();}
+};
 $("next").onclick=()=>{if(answered){index++;render()}};
+
 $("restart").onclick=()=>buildPool();
 $("fav").onclick=()=>{if(!current)return;let i=state.fav.indexOf(current.id);if(i>=0)state.fav.splice(i,1);else state.fav.push(current.id);save();$("fav").textContent=i>=0?"☆ Favorite":"★ Unfavorite"};
 $("section").onchange=buildPool;$("mode").onchange=buildPool;$("search").oninput=buildPool;
